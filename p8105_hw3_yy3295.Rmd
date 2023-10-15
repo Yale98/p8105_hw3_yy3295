@@ -124,8 +124,8 @@ brfss_df |>
   summarise(location_number = n_distinct(location)) |>
   filter(location_number >= 7)
 ```
-In 2002, CT, FL, MA, NC, NJ, PA were observed at 7 or more locations.
-In 2010, CA, CO, FL, MA, MD, NC, NE, NJ, NY, OH, PA, SC, TX,WA were observed at 7 or more locations.
+In 2002, CT, FL, MA, NC, NJ, PA (6 states) were observed at 7 or more locations.
+In 2010, CA, CO, FL, MA, MD, NC, NE, NJ, NY, OH, PA, SC, TX, WA (14 states) were observed at 7 or more locations.
 
 Construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. 
 Make a “spaghetti” plot of this average value over time within a state.
@@ -137,26 +137,33 @@ brfss_df_new <-
   summarise(mean_data_value = mean(data_value))
 
 brfss_df_new |>
-  ggplot(aes(y = mean_data_value, x = year, color = state)) +
+  ggplot(aes(y = mean_data_value, 
+             x = year, 
+             color = state)) +
   geom_line(alpha = 0.7) +
   geom_point(alpha = 0.3) +
-  labs(x = "Year", y = "Mean Data Value", 
+  labs(x = "Year", 
+       y = "Mean Data Value", 
        title = "Average Value Over Time Within State")
 ```
+From this plot we 
 
 Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
 ```{r}
 brfss_df |>
   filter(state == "NY", year %in% c(2006, 2010)) |>
-  ggplot(aes(y = data_value, x = response, color = response)) +
+  ggplot(aes(y = data_value, 
+             x = response, 
+             color = response)) +
   geom_boxplot() +
   facet_wrap(~year) +
-  labs(x = "Reponses", y = "Data Value",
+  labs(x = "Reponses", 
+       y = "Data Value",
        title = "2006 and 2010 Data Value vs Response")
 ```
 
 #Problem 3
-Load the data, Tidy, merge and organize the data sets
+Load the data. 
 ```{r}
 nhanes_accel <- read.csv(file = "./data/nhanes_accel.csv") |>
   janitor::clean_names() |>
@@ -168,6 +175,7 @@ nhanes_covar <- read.csv(file = "./data/nhanes_covar.csv", skip = 4) |>
   filter(age >= 21)
 ```
 
+Tidy, merge and organize the data sets
 ```{r}
 nhanes_merge <- inner_join(nhanes_covar, nhanes_accel,
                            by = "seqn")
@@ -180,16 +188,15 @@ nhanes_merge$education <- factor(nhanes_merge$education,
                                  labels = c("Less than high school", "High school equivalent", "More than high school"))
 
 nhanes_merge$age <- as.integer(nhanes_merge$age)
-nhanes_merge$bmi <- as.integer(nhanes_merge$bmi)
 ```
 
 Produce a reader-friendly table for the number of men and women in each education category, and create a visualization of the age distributions for men and women in each education category.
 ```{r}
 nhanes_merge |>
   group_by(sex, education) |>
-  summarise(n_obs = n()) |>
+  summarise(count = n()) |>
   pivot_wider(names_from = education,
-              values_from = n_obs) |>
+              values_from = count) |>
   knitr::kable()
 
 nhanes_merge |>
@@ -201,17 +208,18 @@ nhanes_merge |>
        y = "Age",
        title = "Age Distributions for men and women in eaxh education category",)
 ```
+From the table for the number of men and women in each education category, we can learn that there are 27 males and 28 females whose education level is less than high school, there are 35 males and 23 females whose education level is high school equivalent, there are 56 males and 59 females whose education level is more than high school.
 
 Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences.
 ```{r}
 nhanes_merge_0 <- nhanes_merge |>
-  mutate(total_activity = rowSums(across(min1:min1440)))
+  mutate(ta = rowSums(across(min1:min1440)))
 
 ggplot(nhanes_merge_0, aes(x = age,
-                           y = total_activity,
+                           y = ta,
                            color = sex)) +
   geom_point() +
-  geom_smooth() +
+  geom_smooth(method = lm) +
   facet_grid(~education) +
   labs(x = "age",
        y = "total_activity",
@@ -230,7 +238,7 @@ nhanes_merge_1 |>
   ggplot(aes(x = min,
              y = activity,
              color = sex)) +
-  geom_line() +
+  geom_line(alpha = 0.5) +
   geom_smooth() +
   facet_wrap(~education) +
   labs(x = "Min",
