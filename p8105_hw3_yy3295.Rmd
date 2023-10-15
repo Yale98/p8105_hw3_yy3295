@@ -161,7 +161,7 @@ brfss_df |>
        y = "Data Value",
        title = "2006 and 2010 Data Value vs Response")
 ```
-From the plot of 2006 and 2010 data values vs responses, we can learn that there is no significance difference of data value and responses between the year 2006 and year 2010.
+From the plot of 2006 and 2010 data values vs responses, we can learn that there is no significant difference of data value and responses between the year 2006 and year 2010.
 The poor group has the least data value and the very good group has the highest data value in both years.
 
 #Problem 3
@@ -205,7 +205,7 @@ nhanes_merge |>
   ggplot(aes(x = education,
              y = age,
              fill = sex)) +
-  geom_boxplot() +
+  geom_boxplot(alpha = 0.7) +
   labs(x = "Education Category",
        y = "Age",
        title = "Age Distributions for men and women in eaxh education category",)
@@ -222,8 +222,8 @@ nhanes_merge_0 <- nhanes_merge |>
 ggplot(nhanes_merge_0, aes(x = age,
                            y = ta,
                            color = sex)) +
-  geom_point() +
-  geom_smooth(method = lm) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = lm, alpha = 0.3) +
   facet_grid(~education) +
   labs(x = "age",
        y = "total_activity",
@@ -246,7 +246,7 @@ nhanes_merge_1 |>
              y = activity,
              color = sex)) +
   geom_line(alpha = 0.5) +
-  geom_smooth() +
+  geom_smooth(alpha = 0.5) +
   facet_wrap(~education) +
   labs(x = "Min",
        y = "Activity",
