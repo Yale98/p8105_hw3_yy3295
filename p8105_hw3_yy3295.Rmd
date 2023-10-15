@@ -210,6 +210,8 @@ nhanes_merge |>
 ```
 From the table for the number of men and women in each education category, we can learn that there are 27 males and 28 females whose education level is less than high school, there are 35 males and 23 females whose education level is high school equivalent, there are 56 males and 59 females whose education level is more than high school.
 
+From the plot for age distributions for men and women in each education category, we can learn that for males and females with education category of less than high school and more than high school, their age distribution has no significant difference. For males and females with education category of high school equivalent, the age distribution of males are younger than females.
+
 Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences.
 ```{r}
 nhanes_merge_0 <- nhanes_merge |>
@@ -225,6 +227,9 @@ ggplot(nhanes_merge_0, aes(x = age,
        y = "total_activity",
        title = "Total activities against Age") 
 ```
+From the plot of total activities vs age, we can learn that there is negative association between total activities and ages for the three education categories. 
+For high school or equivalent and more than high school groups, females tend to have higher total activities than males.
+For less than high school group, females and males tends to have similar trends, however, as age increases, the total activities decrease at a higher rate when compared to other groups.
 
 Accelerator data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex.
 ```{r}
@@ -243,5 +248,6 @@ nhanes_merge_1 |>
   facet_wrap(~education) +
   labs(x = "Min",
        y = "Activity",
-       title = "24-hour activirt time courses for each education level",)
+       title = "24-hour activity time courses for each education level",)
 ```
+From the plot of 24-hour activity time courses for each category level, we can learn that there is no significant difference of 24-hour activity time courses between all three education categories. 
